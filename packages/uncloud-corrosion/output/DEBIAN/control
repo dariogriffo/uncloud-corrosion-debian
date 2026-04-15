@@ -1,0 +1,10 @@
+Section: utils
+Priority: optional
+Maintainer: Dario Griffo <dariogriffo@gmail.com>
+Vcs-Git: https://github.com/psviderski/corrosion
+Homepage: https://github.com/psviderski/corrosion
+Pre-Depends: adduser
+Package: uncloud-corrosion
+Version: CORROSION_VERSION-BUILD_VERSION+DIST
+Architecture: SUPPORTED_ARCHITECTURES
+Description: Gossip-based service discovery and distributed state management for large distributed systems. Maintains an eventually consistent SQLite database on each node, synchronized via gossip protocols with fast local reads and writes.

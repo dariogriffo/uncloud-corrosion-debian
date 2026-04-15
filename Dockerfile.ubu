@@ -1,0 +1,35 @@
+ARG UBUNTU_DIST=noble
+FROM ubuntu:$UBUNTU_DIST
+
+ARG CORROSION_VERSION
+ARG UBUNTU_DIST
+ARG BUILD_VERSION
+ARG FULL_VERSION
+ARG ARCH
+
+RUN mkdir -p /output/usr/bin
+RUN mkdir -p /output/DEBIAN
+RUN mkdir -p /output/usr/share/doc/uncloud-corrosion/
+RUN mkdir -p /output/lib/systemd/system/
+
+COPY build/${ARCH}/corrosion /output/usr/bin/corrosion
+
+COPY packages/uncloud-corrosion/output/DEBIAN/control /output/DEBIAN/
+COPY packages/uncloud-corrosion/output/DEBIAN/postinst /output/DEBIAN/
+COPY packages/uncloud-corrosion/output/DEBIAN/prerm /output/DEBIAN/
+COPY packages/uncloud-corrosion/output/changelog.Debian /output/usr/share/doc/uncloud-corrosion/
+COPY packages/uncloud-corrosion/output/copyright /output/usr/share/doc/uncloud-corrosion/
+COPY packages/uncloud-corrosion/output/uncloud-corrosion.service /output/lib/systemd/system/
+
+RUN sed -i "s/DIST/$UBUNTU_DIST/" /output/usr/share/doc/uncloud-corrosion/changelog.Debian
+RUN sed -i "s/BUILD_VERSION/$BUILD_VERSION/" /output/usr/share/doc/uncloud-corrosion/changelog.Debian
+RUN sed -i "s/CORROSION_VERSION/$CORROSION_VERSION/" /output/usr/share/doc/uncloud-corrosion/changelog.Debian
+
+RUN sed -i "s/DIST/$UBUNTU_DIST/" /output/DEBIAN/control
+RUN sed -i "s/BUILD_VERSION/$BUILD_VERSION/" /output/DEBIAN/control
+RUN sed -i "s/CORROSION_VERSION/$CORROSION_VERSION/" /output/DEBIAN/control
+RUN sed -i "s/SUPPORTED_ARCHITECTURES/$ARCH/" /output/DEBIAN/control
+
+RUN chmod 755 /output/usr/bin/corrosion
+RUN chmod 755 /output/DEBIAN/postinst /output/DEBIAN/prerm
+RUN dpkg-deb --build /output /uncloud-corrosion_${FULL_VERSION}.deb

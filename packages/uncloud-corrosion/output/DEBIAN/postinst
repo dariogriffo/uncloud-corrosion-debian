@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+if [ "$1" = "configure" ]; then
+    adduser --system --home /var/lib/uncloud --shell /usr/sbin/nologin --group uncloud || true
+    systemctl daemon-reload
+    systemctl enable uncloud-corrosion.service
+    systemctl start uncloud-corrosion.service || true
+fi
